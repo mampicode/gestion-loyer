@@ -21,7 +21,7 @@ function AddressAutocomplete({ value, onChange, placeholder = "Adresse" }) {
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
           query
-        )}&countrycodes=mg&limit=5`
+        )}&countrycodes=ci&limit=5`
       );
       const data = await res.json();
       setSuggestions(data);

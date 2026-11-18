@@ -3,6 +3,8 @@ import { useAuth } from "../../context/AuthContext";
 import { getStats } from "../../services/dashboardService";
 import { getPaiements } from "../../services/paiementService";
 import { useNavigate } from "react-router-dom";
+import AlertesSection from "./AlertesSection";
+import DerniersPaiements from "./DerniersPaiements";
 
 const monthLabels = [
   "Janv.",
@@ -105,6 +107,12 @@ function Dashboard() {
       };
     })
   );
+  const today = new Date().toLocaleDateString("fr-FR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
 
   useEffect(() => {
     const load = async () => {
@@ -138,19 +146,23 @@ function Dashboard() {
       <div className="dashboard-header-row">
         <div className="dashboard-title-block">
           <h1>Votre parc, en un coup d'œil</h1>
-          <p>Vendredi 13 novembre 2026 - Voici la situation de vos résidences.</p>
+         <p style={{ color: "var(--text-muted)", margin: "4px 0 0" }}>
+  {today} — Bienvenue {user?.prenom} {user?.nom}
+</p>
         </div>
 
         <button type="button" className="dashboard-date-filter">
-          Novembre 2026
-        </button>
+  {new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}
+</button>
       </div>
 
       <div className="metric-grid">
         <div className="metric-card">
           <div className="metric-label">Foyers</div>
           <div className="metric-value">{stats.foyers}</div>
-          <div className="metric-foot">8 immeubles - 4 maisons</div>
+          <div className="metric-foot">
+  {stats.immeubles} immeuble(s) — {stats.maisons} maison(s)
+</div>
         </div>
 
         <div className="metric-card">
@@ -168,7 +180,7 @@ function Dashboard() {
         <div className="metric-card">
           <div className="metric-label">Contrats actifs</div>
           <div className="metric-value">{stats.contrats}</div>
-          <div className="metric-foot">3 renouvellements ce mois</div>
+          <div className="metric-foot">{stats.renouvellements || 0} renouvellement(s) ce mois</div>
         </div>
 
         <div className="metric-card">
@@ -176,7 +188,7 @@ function Dashboard() {
           <div className="metric-value danger">
             {stats.impayes.toLocaleString("fr-FR")} Ar
           </div>
-          <div className="metric-foot">8 locataires à relancer</div>
+          <div className="metric-foot">{stats.aRelancer || 0} locataire(s) à relancer</div>
         </div>
       </div>
 
@@ -214,76 +226,12 @@ function Dashboard() {
         </section>
 
         <aside className="panel panel-alerts">
-          <div className="panel-header alerts-header">
-            <h2>À votre attention</h2>
-            <span className="alert-badge">8</span>
-          </div>
-
-          <div className="alert-item">
-            <strong>8 loyers en retard</strong>
-            <span>1 240 000 Ar à recouvrer</span>
-            <button
-              type="button"
-              className="text-link"
-              onClick={() => navigate("/admin/impayes")}
-            >
-              Voir les impayés →
-            </button>
-          </div>
-
-          <div className="alert-item">
-            <strong>3 réclamations ouvertes</strong>
-            <span>1 demande à traiter en priorité</span>
-            <button
-              type="button"
-              className="text-link"
-              onClick={() => navigate("/admin/reclamations")}
-            >
-              Voir les réclamations →
-            </button>
-          </div>
+          <AlertesSection />
         </aside>
       </div>
 
       <section className="panel panel-table">
-        <div className="panel-header table-header">
-          <h2>Derniers paiements</h2>
-          <button
-            type="button"
-            className="text-link table-link"
-            onClick={() => navigate("/admin/paiements")}
-          >
-            Tout voir →
-          </button>
-        </div>
-
-        <table className="payments-table">
-          <thead>
-            <tr>
-              <th>Locataire</th>
-              <th>Foyer / lot</th>
-              <th>Date</th>
-              <th>Montant</th>
-              <th>Mode</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paymentRows.map((row) => (
-              <tr key={`${row.locataire}-${row.date}`}>
-                <td>{row.locataire}</td>
-                <td>{row.foyer}</td>
-                <td>{row.date}</td>
-                <td>{row.montant}</td>
-                <td>{row.mode}</td>
-                <td>
-                  <span className="status-pill">{row.statut}</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DerniersPaiements />
       </section>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getContrats, createPaiement } from "../../services/paiementService";
 
 const DEFAULT_CONTRACTS = [
@@ -46,6 +47,7 @@ const parseAmount = (raw) => {
 };
 
 function Paiements() {
+	const navigate = useNavigate();
 	const [contracts, setContracts] = useState(DEFAULT_CONTRACTS);
 	const [selectedContractId, setSelectedContractId] = useState(DEFAULT_CONTRACTS[0].idContrat);
 	const [form, setForm] = useState({
@@ -166,7 +168,11 @@ function Paiements() {
 			</div>
 
 			<div className="payment-back-row">
-				<button type="button" className="payment-back-link">
+				<button
+					type="button"
+					className="payment-back-link"
+					onClick={() => navigate("/paiements")}
+				>
 					← Retour aux paiements
 				</button>
 			</div>
@@ -219,7 +225,7 @@ function Paiements() {
 
 						<div className="payment-field">
 							<label htmlFor="montant">
-								Montant reçu (FCFA) <span className="required-mark">*</span>
+								Montant reçu (Ar) <span className="required-mark">*</span>
 							</label>
 							<input
 								id="montant"

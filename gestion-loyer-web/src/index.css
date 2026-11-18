@@ -3481,32 +3481,111 @@ img {
   border-bottom: none;
 }
 
-@media (max-width: 980px) {
-  .reports-metrics-grid,
-  .reports-panels-grid,
-  .reports-header-row {
-    grid-template-columns: 1fr;
-    display: grid;
-  }
-
-  .reports-header-row {
-    align-items: flex-start;
-  }
-
-  .reports-export-btn {
-    width: 100%;
-  }
+/* Styles IHM détaillés ajoutés pour les écrans fonctionnels */
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] html,
+:root[data-theme="dark"] #root {
+  background: #17252b;
+  color: #edf4f5;
 }
+:root[data-theme="dark"] .main-shell,
+:root[data-theme="dark"] .app-layout,
+:root[data-theme="dark"] .page-content { background: #1d2d33; }
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] .foyer-form-card,
+:root[data-theme="dark"] .side-panel-box,
+:root[data-theme="dark"] .lots-table-card,
+:root[data-theme="dark"] .lot-draft-form { background: #243840; border-color: #35505a; color: #edf4f5; }
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea { background: #1e343b !important; color: #edf4f5 !important; border-color: #3b5660 !important; }
 
-@media (max-width: 820px) {
-  .reports-metrics-grid,
-  .reports-panels-grid {
-    grid-template-columns: 1fr;
-  }
+.foyer-form-page { max-width: 1180px; min-height: calc(100vh - 108px); display: flex; flex-direction: column; }
+.foyer-form-breadcrumb { display: flex; align-items: center; gap: 9px; color: #7b8d99; font-size: .82rem; }
+.foyer-form-breadcrumb strong { color: #334155; }
+.foyer-back-link { width: fit-content; margin-top: 12px; border: 0; background: transparent; color: #168e91; padding: 4px 0; font-size: .82rem; font-weight: 700; }
+.foyer-form-header { margin: 4px 0 12px; }
+.foyer-form-header h1 { margin: 0; font-size: 1.55rem; color: #26384a; letter-spacing: -.04em; }
+.foyer-form-header p { margin: 5px 0 0; color: #7b8d99; font-size: .82rem; }
+.foyer-form-alert { margin: 0 0 10px; border: 1px solid #efc7c7; background: #fff5f5; color: #a23e3e; border-radius: 7px; padding: 9px 12px; font-size: .82rem; }
+.foyer-form-main-layout { display: grid; grid-template-columns: minmax(520px, 1.65fr) minmax(280px, .85fr); gap: 22px; align-items: start; }
+.foyer-form-card, .side-panel-box { background: rgba(255,255,255,.82); border: 1px solid rgba(148,163,184,.18); border-radius: 7px; box-shadow: 0 8px 22px rgba(15,23,42,.025); }
+.foyer-form-card { padding: 18px 20px 14px; }
+.form-section-title, .side-panel-title { display: flex; gap: 8px; color: #26384a; font-size: .88rem; font-weight: 700; }
+.form-section-title span, .side-panel-title span { color: #188e90; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; margin-top: 16px; }
+.field-block { display: flex; flex-direction: column; min-width: 0; }
+.field-block.full { grid-column: 1 / -1; }
+.field-block label { margin-bottom: 5px; color: #65758a; font-size: .68rem; font-weight: 700; }
+.required { color: #df5656; }
+.foyer-input { width: 100%; height: 38px; border: 1px solid #dce4ea; border-radius: 5px; background: #fff; color: #26384a; padding: 0 10px; font-size: .76rem; outline: none; }
+.foyer-input:focus { border-color: #269b9b; box-shadow: 0 0 0 3px rgba(38,155,155,.1); }
+.foyer-input.field-error { border-color: #dc6565; }
+.field-message { margin-top: 3px; color: #c64b4b; font-size: .65rem; }
+.segmented-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.segment { height: 34px; border: 1px solid #dde4ea; border-radius: 5px; background: #fff; color: #44556a; font-size: .76rem; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.segment-dot { width: 7px; height: 7px; border: 1.5px solid #9aa6b2; border-radius: 50%; }
+.segment.active { border-color: #188f91; background: #188f91; color: #fff; }
+.segment.active .segment-dot { border-color: #fff; background: #fff; }
+.mandatory-note { margin-top: 10px; color: #9aa4b1; font-size: .62rem; }
+.mandatory-note span { color: #df5656; }
+.foyer-side-panel { display: flex; flex-direction: column; gap: 14px; }
+.side-panel-box { padding: 16px 14px 14px; }
+.location-card { height: 268px; }
+.side-panel-title { margin-bottom: 10px; }
+.foyer-map-picker { height: 207px; border-radius: 5px; overflow: hidden; border: 1px solid #dfe6e9; }
+.foyer-map-picker .leaflet-container { height: 100% !important; width: 100% !important; }
+.compact-box { min-height: 145px; }
+.compact-box p { margin: 8px 0 12px; color: #8795a3; font-size: .72rem; line-height: 1.45; }
+.foyer-lot-button { width: 100%; height: 38px; border: 1px solid #dde4ea; border-radius: 5px; background: #fff; color: #41556a; font-size: .72rem; font-weight: 700; }
+.lot-draft-form { display: grid; gap: 7px; margin-top: 8px; }
+.lot-draft-row { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.foyer-lot-cancel { border: 0; background: transparent; color: #7b8794; font-size: .68rem; }
+.foyer-form-footer { margin-top: auto; min-height: 68px; display: flex; align-items: end; justify-content: space-between; }
+.foyer-form-footer-actions { margin-left: auto; display: flex; gap: 8px; }
+.cancel-btn, .confirm-btn, .delete-btn { height: 38px; border-radius: 5px; padding: 0 20px; font-size: .78rem; font-weight: 700; }
+.cancel-btn { border: 1px solid #dfe5ea; background: #fff; color: #526273; }
+.confirm-btn { border: 1px solid #188e90; background: #188f91; color: #fff; min-width: 170px; }
+.confirm-btn:disabled { opacity: .65; cursor: wait; }
+.delete-btn { border: 1px solid #e7b4b4; background: #fff6f6; color: #b44a4a; }
 
-  .report-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+.topbar-popover-wrap { position: relative; }
+.topbar-popover { position: absolute; right: 0; top: 44px; width: 260px; z-index: 80; background: #fff; border: 1px solid #dde5e8; border-radius: 10px; box-shadow: 0 16px 36px rgba(15,23,42,.16); padding: 10px; }
+.search-popover input { width: 100%; height: 38px; border: 1px solid #dfe6ea; border-radius: 7px; padding: 0 10px; }
+.popover-links { display: grid; margin-top: 6px; }
+.popover-links a { color: #40515f; text-decoration: none; padding: 8px; border-radius: 6px; font-size: .82rem; }
+.popover-links a:hover { background: #edf6f5; }
+.notification-popover { display: grid; gap: 5px; }
+.notification-popover strong { padding: 4px 6px 8px; }
+.notification-popover button { border: 0; background: transparent; text-align: left; padding: 8px 6px; color: #40515f; border-radius: 6px; }
+.notification-popover button:hover { background: #edf6f5; }
+
+.lots-page { max-width: 1180px; }
+.lots-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.lots-header h1 { margin: 0; color: #26384a; font-size: 1.75rem; }
+.lots-header p { margin: 5px 0 0; color: #7b8d99; }
+.lots-primary { height: 42px; border: 0; border-radius: 8px; background: #188f91; color: #fff; padding: 0 16px; font-weight: 700; }
+.lots-notice { margin-bottom: 12px; border: 1px solid #bde2d7; background: #effaf6; color: #19705d; border-radius: 8px; padding: 10px 12px; }
+.lots-toolbar { display: grid; grid-template-columns: minmax(260px,1fr) 220px; gap: 12px; margin-bottom: 14px; }
+.lots-search { display: flex; align-items: center; gap: 8px; height: 42px; border: 1px solid #dbe4e8; border-radius: 8px; background: #fff; padding: 0 12px; }
+.lots-search input { flex: 1; border: 0; outline: 0; background: transparent; }
+.lots-toolbar select { height: 42px; border: 1px solid #dbe4e8; border-radius: 8px; background: #fff; padding: 0 10px; }
+.lots-table-card { border: 1px solid #dde5e8; border-radius: 10px; background: #fff; overflow-x: auto; }
+.lots-table { width: 100%; border-collapse: collapse; }
+.lots-table th, .lots-table td { padding: 13px 12px; border-bottom: 1px solid #edf1f2; text-align: left; font-size: .86rem; }
+.lots-table th { color: #71808d; background: #f7f9f9; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; }
+.lots-empty { text-align: center !important; color: #7b8d99; height: 120px; }
+.lot-status { display: inline-flex; border-radius: 999px; padding: 5px 9px; background: #dff3eb; color: #23745d; font-size: .72rem; font-weight: 700; }
+.lot-status.occupe { background: #fff1d5; color: #9a6822; }.lot-status.inactif { background: #edf0f2; color: #65717b; }
+.lots-actions { display: flex; gap: 6px; }.lots-actions button { border: 1px solid #dce5e7; border-radius: 6px; background: #fff; color: #426171; padding: 6px 8px; }.lots-actions button.danger { color: #ae4e4e; }
+.lots-modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(15,23,42,.32); display: grid; place-items: center; padding: 16px; }
+.lots-modal { width: min(520px, 94vw); background: #fff; border-radius: 12px; box-shadow: 0 22px 50px rgba(15,23,42,.22); padding: 18px; }
+.lots-modal-header { display: flex; align-items: center; justify-content: space-between; }.lots-modal-header h2 { margin: 0; }.lots-modal-header button { border: 0; background: #edf2f3; width: 34px; height: 34px; border-radius: 50%; }
+.lots-form { display: grid; gap: 12px; margin-top: 16px; }.lots-form label { display: grid; gap: 6px; color: #536675; font-size: .82rem; }.lots-form input, .lots-form select { height: 40px; border: 1px solid #dce4e8; border-radius: 7px; padding: 0 10px; }.lots-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.lots-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }.lots-modal-actions button { height: 40px; border-radius: 7px; border: 1px solid #dce4e8; background: #fff; padding: 0 14px; }.lots-modal-actions button[type="submit"] { border-color: #188f91; background: #188f91; color: #fff; }
+
+@media (max-width: 980px) {
+  .foyer-form-main-layout { grid-template-columns: 1fr; }.foyer-side-panel { display: grid; grid-template-columns: 1fr 1fr; }.app-layout .sidebar { width: 72px; flex-basis: 72px; }.sidebar-brand-text, .sidebar-role, .sidebar-item span:last-child, .sidebar-utility:not(.logout) { display: none; }.sidebar-item { justify-content: center; }.sidebar-utility { justify-content: center; }
+}
+@media (max-width: 640px) {
+  .app-layout .sidebar { display: none; }.topbar-breadcrumb span:first-child, .topbar-breadcrumb .breadcrumb-separator, .user-meta { display: none; }.foyer-form-breadcrumb { display: none; }.foyer-form-main-layout { display: block; }.foyer-form-card { padding: 16px 12px; }.form-grid { grid-template-columns: 1fr; }.field-block.full, .split-left, .split-right { grid-column: 1; }.foyer-side-panel { display: block; margin-top: 12px; }.compact-box { margin-top: 12px; }.foyer-form-footer { position: sticky; bottom: 0; background: #f0f0f0; padding: 10px 0; }.foyer-form-footer-actions { width: 100%; }.cancel-btn, .confirm-btn { flex: 1; }.lots-header { align-items: flex-start; }.lots-toolbar { grid-template-columns: 1fr; }.lots-form-grid { grid-template-columns: 1fr; }.lots-table th:nth-child(3), .lots-table td:nth-child(3), .lots-table th:nth-child(4), .lots-table td:nth-child(4) { display: none; }
 }

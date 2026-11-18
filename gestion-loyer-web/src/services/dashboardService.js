@@ -1,55 +1,81 @@
 import axiosInstance from "../api/axiosInstance";
 
-const fallback = {
-  foyers: 0,
-  lots: 0,
-  lotsOccupe: 0,
-  totalLots: 0,
-  contrats: 0,
-  impayes: 0,
-  locataires: 0,
-  reclamations: 0,
-};
-
 export const getStats = async () => {
   try {
-    const [foyersRes, lotsRes, contratsRes, impayesRes, reclamationsRes] = await Promise.all([
-      axiosInstance.get("/foyers").catch(() => ({ data: [] })),
-      axiosInstance.get("/lots").catch(() => ({ data: [] })),
-      axiosInstance.get("/contrats").catch(() => ({ data: [] })),
-      axiosInstance.get("/impayes/en-cours").catch(() => ({ data: [] })),
-      axiosInstance.get("/reclamations").catch(() => ({ data: [] })),
+    const [foyers, lots, contrats, impayes] = await Promise.all([
+      axiosInstance.get("/foyers"),
+      axiosInstance.get("/lots"),
+      axiosInstance.get("/contrats"),
+      axiosInstance.get("/impayes"),
     ]);
 
-    const foyers = Array.isArray(foyersRes.data) ? foyersRes.data : [];
-    const lots = Array.isArray(lotsRes.data) ? lotsRes.data : [];
-    const contrats = Array.isArray(contratsRes.data) ? contratsRes.data : [];
-    const impayes = Array.isArray(impayesRes.data) ? impayesRes.data : [];
-    const reclamations = Array.isArray(reclamationsRes.data) ? reclamationsRes.data : [];
+    const foyersData = foyers.data || [];
+    const nbMaisons = foyersData.filter((f) => f.typeFoyer === "Maison").length;
+    const nbImmeubles = foyersData.filter((f) => f.typeFoyer === "Immeuble").length;
 
-    const totalLots = lots.length;
-    const lotsOccupe = lots.filter((lot) => {
-      const statut = String(lot.statut || lot.status || "").toUpperCase();
-      return statut === "OCCUPE" || statut === "ACTIF";
-    }).length;
+    const contratsData = contrats.data || [];
+const now = new Date();
+const currentMonth = now.getMonth();
+const currentYear = now.getFullYear();
 
-    const impayesTotal = impayes.reduce((sum, item) => {
-      const value = Number(item.montantRestant ?? item.montantDu ?? item.montant ?? 0);
-      return sum + (Number.isFinite(value) ? value : 0);
-    }, 0);
+const renouvellements = contratsData.filter((c) => {
+  if (!c.dateFin) return false;
+  const fin = new Date(c.dateFin);
+  return fin.getMonth() === currentMonth && fin.getFullYear() === currentYear;
+}).length;
+
+const impayesData = impayes.data || [];
+const aRelancer = impayesData.filter((i) => i.statut === "EN_COURS" || i.statut === "RELANCE").length;
 
     return {
-      foyers: foyers.length,
-      lots: totalLots,
-      lotsOccupe,
-      totalLots,
-      contrats: contrats.length,
-      impayes: impayesTotal,
-      locataires: contrats.length,
-      reclamations: reclamations.length,
+      foyers: foyersData.length,
+      maisons: nbMaisons,
+      immeubles: nbImmeubles,
+      lots: lots.data?.length || 0,
+      contrats: contrats.data?.length || 0,
+      impayes: impayes.data?.length || 0,
+      renouvellements: renouvellements,
+      aRelancer: aRelancer, 
     };
-  } catch (error) {
-    console.warn("Stats dashboard indisponibles.", error);
-    return fallback;
+  } catch {
+    return { foyers: 0, maisons: 0, immeubles: 0, lots: 0, contrats: 0, impayes: 0, renouvellements: 0 , aRelancer: 0,};
   }
 };
+
+export const getAlertes = async () => {
+  try {
+    const [impayesRes, reclamationsRes] = await Promise.all([
+      axiosInstance.get("/impayes"),
+      axiosInstance.get("/reclamations"),
+    ]);
+
+    const impayes = impayesRes.data || [];
+    const reclamations = reclamationsRes.data || [];
+
+    const totalDu = impayes.reduce((sum, i) => sum + (i.montantDu || 0), 0);
+    const reclamationsOuvertes = reclamations.filter(
+      (r) => r.statut === "OUVERTE" || r.statut === "EN_COURS"
+    );
+
+    return {
+      nbImpayes: impayes.length,
+      totalDu,
+      nbReclamations: reclamationsOuvertes.length,
+    };
+  } catch {
+    return { nbImpayes: 0, totalDu: 0, nbReclamations: 0 };
+  }
+};
+
+export const getDerniersPaiements = async () => {
+  try {
+    const res = await axiosInstance.get("/paiements");
+    const paiements = res.data || [];
+    return paiements
+      .sort((a, b) => new Date(b.datePaiement) - new Date(a.datePaiement))
+      .slice(0, 5);
+  } catch {
+    return [];
+  }
+};
+

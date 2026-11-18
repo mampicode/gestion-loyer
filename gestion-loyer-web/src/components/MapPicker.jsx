@@ -21,7 +21,7 @@ function LocationMarker({ position, setPosition }) {
 }
 
 function MapPicker({ position, setPosition }) {
-  const defaultCenter = [-21.45, 47.08]; // Fianarantsoa
+  const defaultCenter = [5.3599, -3.9870]; // Abidjan
 
   return (
     <MapContainer

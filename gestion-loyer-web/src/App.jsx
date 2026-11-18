@@ -19,6 +19,7 @@ import Reclamations from "./pages/admin/Reclamations";
 import Rapports from "./pages/admin/Rapports";
 import Parametres from "./pages/admin/Parametres";
 import FoyerDetail from "./pages/admin/FoyerDetail";
+import Lots from "./pages/admin/Lots";
 
 
 
@@ -36,23 +37,21 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-  {/* Pages publiques */}
-  
-  <Route
-  path="/locataire"
-  element={
-    <PrivateRoute role="LOCATAIRE">
-      <LocataireLayout />
-    </PrivateRoute>
-  }
->
-  <Route index element={<DashboardLocataire />} />
-  {/* Tu ajouteras les autres pages plus tard */}
-</Route>
+            <Route path="foyers/:id" element={<FoyerDetail />} />
   <Route path="/login" element={<Login />} />
   <Route path="/register" element={<Register />} />
   <Route path="/forgot-password" element={<ForgotPassword />} />
   <Route path="/reset-password" element={<ResetPassword />} />
+
+  {/* Pages Locataire protégées */}
+  <Route
+    path="/locataire"
+    element={
+      <PrivateRoute role="LOCATAIRE">
+        <DashboardLocataire />
+      </PrivateRoute>
+    }
+  />
 
   {/* Pages Admin protégées */}
   <Route
@@ -66,6 +65,7 @@ function App() {
     <Route index element={<Dashboard />} />
     <Route path="foyers" element={<Foyers />} />
     <Route path="foyers/nouveau" element={<FoyerForm />} />
+    <Route path="foyers/:id/modifier" element={<FoyerForm />} />
     <Route path="foyers/:id" element={<FoyerDetail />} />
     <Route path="paiements" element={<Paiements />} />
     <Route path="impayes" element={<Impayes />} />
@@ -73,17 +73,8 @@ function App() {
     <Route path="reclamations" element={<Reclamations />} />
     <Route path="rapports" element={<Rapports />} />
     <Route path="parametres" element={<Parametres />} />
+    <Route path="lots" element={<Lots />} />
   </Route>
-
-  {/* Pages Locataire protégées */}
-  <Route
-    path="/locataire"
-    element={
-      <PrivateRoute role="LOCATAIRE">
-        <DashboardLocataire />
-      </PrivateRoute>
-    }
-  />
 
   {/* Redirection par défaut */}
   <Route path="*" element={<Navigate to="/login" />} />

@@ -1,15 +1,26 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+import { useTheme } from "../context/ThemeContext";
 import logo from "../assets/logo-akany-flm.png";
 
 function AdminLayout() {
   const { user, logoutUser } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
     logoutUser();
     navigate("/login");
+  };
+
+  const handleThemeToggle = () => {
+    toggleTheme();
+    setIsDarkMode(!isDarkMode);
   };
 
   const isActive = (path) => location.pathname.startsWith(path);
@@ -21,8 +32,9 @@ function AdminLayout() {
     "/admin/paiements": "Paiements",
     "/admin/impayes": "Impayés",
     "/admin/reclamations": "Réclamations",
-    "/admin/parametres": "Utilisateurs",
+    "/admin/parametres": "Locataires",
     "/admin/rapports": "Rapports",
+    "/admin/lots": "Lots",
   };
 
   const currentBreadcrumb =
@@ -36,8 +48,9 @@ function AdminLayout() {
     { to: "/admin/paiements", label: "Paiements" },
     { to: "/admin/impayes", label: "Impayés" },
     { to: "/admin/reclamations", label: "Réclamations" },
-    { to: "/admin/parametres", label: "Utilisateurs" },
+    { to: "/admin/parametres", label: "Locataires" },
     { to: "/admin/rapports", label: "Rapports" },
+    { to: "/admin/lots", label: "Lots" },
   ];
 
   const userName = `${user?.prenom ?? "Marie"} ${user?.nom ?? "Kouamé"}`.trim();
@@ -77,8 +90,9 @@ function AdminLayout() {
                 {item.label === "Paiements" && "◫"}
                 {item.label === "Impayés" && "△"}
                 {item.label === "Réclamations" && "◍"}
-                {item.label === "Utilisateurs" && "◌"}
+                {item.label === "Locataires" && "◌"}
                 {item.label === "Rapports" && "▥"}
+                {item.label === "Lots" && "▦"}
               </span>
               <span>{item.label}</span>
             </Link>
@@ -86,9 +100,9 @@ function AdminLayout() {
         </nav>
 
         <div className="sidebar-footer">
-          <button type="button" className="sidebar-utility">
+          <button type="button" className="sidebar-utility" onClick={toggleTheme} aria-label="Changer le thème">
             <span className="utility-icon">☼</span>
-            Mode clair
+            {theme === "light" ? "Mode sombre" : "Mode clair"}
           </button>
           <button type="button" className="sidebar-utility logout" onClick={handleLogout}>
             <span className="utility-icon">↪</span>
@@ -106,19 +120,19 @@ function AdminLayout() {
           </div>
 
           <div className="topbar-actions">
-            <button type="button" className="icon-button" aria-label="Recherche">
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="topbar-icon-svg">
-                <circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" strokeWidth="1.8" />
-                <path d="M16 16L21 21" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-              </svg>
-            </button>
-            <button type="button" className="icon-button notification-button" aria-label="Notifications">
-              <svg viewBox="0 0 24 24" aria-hidden="true" className="topbar-icon-svg">
-                <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" />
-                <path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-              </svg>
-              <span className="notification-dot" aria-hidden="true" />
-            </button>
+            <div className="topbar-popover-wrap">
+              <button type="button" className="icon-button" aria-label="Recherche" aria-expanded={searchOpen} onClick={() => { setSearchOpen((value) => !value); setNotificationsOpen(false); }}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="topbar-icon-svg"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="M16 16L21 21" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+              </button>
+              {searchOpen && <div className="topbar-popover search-popover"><input autoFocus type="search" placeholder="Rechercher une page..." onChange={(event) => { const value = event.target.value.toLowerCase(); const match = navItems.find((item) => item.label.toLowerCase().includes(value)); if (match && value) window.requestAnimationFrame(() => {}); }} /><div className="popover-links">{navItems.map((item) => <Link key={item.to} to={item.to} onClick={() => setSearchOpen(false)}>{item.label}</Link>)}</div></div>}
+            </div>
+            <div className="topbar-popover-wrap">
+              <button type="button" className="icon-button notification-button" aria-label="Notifications" aria-expanded={notificationsOpen} onClick={() => { setNotificationsOpen((value) => !value); setSearchOpen(false); }}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="topbar-icon-svg"><path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" /><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></svg>
+                <span className="notification-dot" aria-hidden="true" />
+              </button>
+              {notificationsOpen && <div className="topbar-popover notification-popover"><strong>Notifications</strong><button type="button" onClick={() => { setNotificationsOpen(false); navigate("/admin/impayes"); }}>8 loyers en retard</button><button type="button" onClick={() => { setNotificationsOpen(false); navigate("/admin/reclamations"); }}>3 réclamations ouvertes</button></div>}
+            </div>
             <div className="user-chip">
               <div className="user-avatar">MK</div>
               <div className="user-meta">

@@ -22,6 +22,8 @@ import FoyerDetail from "./pages/admin/FoyerDetail";
 import Lots from "./pages/admin/Lots";
 import PaiementsLocataire from "./pages/locataire/PaiementsLocataire";
 import DeclarerPaiementLocataire from "./pages/locataire/DeclarerPaiementLocataire";
+import ContratLocataire from "./pages/locataire/ContratLocataire";
+import ReclamationsLocataire from "./pages/locataire/ReclamationsLocataire";
 
 function PrivateRoute({ children, role }) {
   const { user } = useAuth();
@@ -54,8 +56,8 @@ function App() {
               <Route index element={<DashboardLocataire />} />
               <Route path="paiements" element={<PaiementsLocataire />} />
               <Route path="paiements/declarer" element={<DeclarerPaiementLocataire />} />
-              <Route path="contrat" element={<DashboardLocataire />} />
-              <Route path="reclamations" element={<DashboardLocataire />} />
+              <Route path="contrat" element={<ContratLocataire />} />
+              <Route path="reclamations" element={<ReclamationsLocataire />} />
             </Route>
 
             {/* Pages Admin protégées */}

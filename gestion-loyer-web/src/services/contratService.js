@@ -5,8 +5,11 @@ export const getContrats = async () => {
   return res.data;
 };
 
-export const createContrat = async (data) => {
-  const res = await axiosInstance.post("/contrats", data);
+export const createContrat = async (idLocataire, idLot, data) => {
+  const res = await axiosInstance.post(
+    `/contrats/locataire/${idLocataire}/lot/${idLot}`,
+    data
+  );
   return res.data;
 };
 

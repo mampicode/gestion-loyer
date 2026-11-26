@@ -39,7 +39,9 @@ public class ContratService {
 
         contrat.setLocataire(locataire);
         contrat.setLot(lot);
-        contrat.setStatut("EN_COURS");
+        if (contrat.getStatut() == null || contrat.getStatut().isBlank()) {
+            contrat.setStatut("EN_COURS");
+        }
         if (contrat.getDateSignature() == null) {
             contrat.setDateSignature(new Date());
         }

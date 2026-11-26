@@ -21,9 +21,6 @@ import Parametres from "./pages/admin/Parametres";
 import FoyerDetail from "./pages/admin/FoyerDetail";
 import Lots from "./pages/admin/Lots";
 
-
-
-
 function PrivateRoute({ children, role }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" />;
@@ -38,47 +35,52 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="foyers/:id" element={<FoyerDetail />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-  <Route path="/forgot-password" element={<ForgotPassword />} />
-  <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-  {/* Pages Locataire protégées */}
-  <Route
-    path="/locataire"
-    element={
-      <PrivateRoute role="LOCATAIRE">
-        <DashboardLocataire />
-      </PrivateRoute>
-    }
-  />
+            {/* Pages Locataire protégées */}
+            <Route
+              path="/locataire"
+              element={
+                <PrivateRoute role="LOCATAIRE">
+                  <LocataireLayout />
+                </PrivateRoute>
+              }
+            >
+              <Route index element={<DashboardLocataire />} />
+              <Route path="paiements" element={<DashboardLocataire />} />
+              <Route path="contrat" element={<DashboardLocataire />} />
+              <Route path="reclamations" element={<DashboardLocataire />} />
+            </Route>
 
-  {/* Pages Admin protégées */}
-  <Route
-    path="/admin"
-    element={
-      <PrivateRoute role="ADMIN">
-        <AdminLayout />
-      </PrivateRoute>
-    }
-  >
-    <Route index element={<Dashboard />} />
-    <Route path="foyers" element={<Foyers />} />
-    <Route path="foyers/nouveau" element={<FoyerForm />} />
-    <Route path="foyers/:id/modifier" element={<FoyerForm />} />
-    <Route path="foyers/:id" element={<FoyerDetail />} />
-    <Route path="paiements" element={<Paiements />} />
-    <Route path="impayes" element={<Impayes />} />
-    <Route path="contrats" element={<Contrats />} />
-    <Route path="reclamations" element={<Reclamations />} />
-    <Route path="rapports" element={<Rapports />} />
-    <Route path="parametres" element={<Parametres />} />
-    <Route path="lots" element={<Lots />} />
-  </Route>
+            {/* Pages Admin protégées */}
+            <Route
+              path="/admin"
+              element={
+                <PrivateRoute role="ADMIN">
+                  <AdminLayout />
+                </PrivateRoute>
+              }
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="foyers" element={<Foyers />} />
+              <Route path="foyers/nouveau" element={<FoyerForm />} />
+              <Route path="foyers/:id/modifier" element={<FoyerForm />} />
+              <Route path="foyers/:id" element={<FoyerDetail />} />
+              <Route path="paiements" element={<Paiements />} />
+              <Route path="impayes" element={<Impayes />} />
+              <Route path="contrats" element={<Contrats />} />
+              <Route path="reclamations" element={<Reclamations />} />
+              <Route path="rapports" element={<Rapports />} />
+              <Route path="parametres" element={<Parametres />} />
+              <Route path="lots" element={<Lots />} />
+            </Route>
 
-  {/* Redirection par défaut */}
-  <Route path="*" element={<Navigate to="/login" />} />
-</Routes>
+            {/* Redirection par défaut */}
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>

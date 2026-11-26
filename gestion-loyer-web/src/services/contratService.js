@@ -27,3 +27,8 @@ export const getLots = async () => {
   const res = await axiosInstance.get("/lots");
   return res.data;
 };
+
+export const getContratsLocataire = async (idLocataire) => {
+  const res = await axiosInstance.get(`/contrats/locataire/${idLocataire}`);
+  return res.data;
+};

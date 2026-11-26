@@ -22,18 +22,24 @@ function Login() {
 
     try {
       const data = await login(email, motDePasse);
+      const backendRole = String(data?.role || "").toUpperCase();
+      const normalizedRole = backendRole.includes("LOC")
+        ? "LOCATAIRE"
+        : backendRole.includes("ADMIN")
+          ? "ADMIN"
+          : role;
       const normalizedUser = {
         id: data?.id ?? data?.idUtilisateur ?? null,
         nom: data?.nom || "",
         prenom: data?.prenom || "",
         email: data?.email || email,
-        role: data?.role || role,
+        role: normalizedRole,
         token: data?.token || localStorage.getItem("token"),
       };
 
       if (data?.message === "Connexion réussie" || data?.role || data?.email || normalizedUser.id) {
-        loginUser({ ...normalizedUser, user: normalizedUser });
-        navigate(role === "ADMIN" ? "/admin" : "/locataire");
+        loginUser(normalizedUser);
+        navigate(normalizedRole === "ADMIN" ? "/admin" : "/locataire");
         return;
       }
 

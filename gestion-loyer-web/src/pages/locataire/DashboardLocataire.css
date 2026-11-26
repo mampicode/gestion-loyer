@@ -1,0 +1,43 @@
+.locataire-app.app-layout { width: 100%; min-height: 100vh; }
+.locataire-dashboard { width: 100%; max-width: 1180px; }
+.locataire-dashboard-heading { display: flex; justify-content: space-between; align-items: flex-start; margin: 2px 0 20px; }
+.locataire-dashboard-heading h1 { margin: 0; color: #25374a; font-size: 1.7rem; }
+.locataire-dashboard-heading p { margin: 7px 0 0; color: #7d8e9b; font-size: .82rem; }
+.locataire-dashboard-heading > span { color: #7d8e9b; font-size: .72rem; }
+.locataire-dashboard-grid { display: grid; grid-template-columns: minmax(0,2.15fr) minmax(220px,.85fr); gap: 16px; }
+.locataire-rent-card { min-height: 214px; border-radius: 10px; background: linear-gradient(135deg,#263e51,#3d5a6d); color: #fff; padding: 20px 22px 18px; }
+.locataire-rent-card-header { display: flex; justify-content: space-between; }
+.locataire-rent-card-header > div { display: grid; gap: 15px; }
+.locataire-rent-card-header span { color: #afbec8; font-size: .62rem; font-weight: 800; }
+.locataire-rent-card-header strong { color: #fff; font-size: 2.45rem; }
+.locataire-rent-status { border-radius: 999px; background: rgba(229,239,222,.1); color: #dce6e9 !important; padding: 7px 10px; }
+.locataire-rent-progress { margin-top: 22px; }
+.locataire-rent-progress > span { display: block; color: #9fb1bc; font-size: .68rem; margin-bottom: 8px; }
+.locataire-progress-track { height: 5px; border-radius: 999px; background: rgba(255,255,255,.12); }
+.locataire-progress-track div { height: 100%; border-radius: 999px; background: #4dc1ad; }
+.locataire-rent-actions { display: flex; align-items: center; gap: 22px; margin-top: 14px; }
+.locataire-pay-button { height: 42px; min-width: 190px; border: 0; border-radius: 7px; background: #1fa3a5; color: #fff; font-weight: 800; cursor: pointer; }
+.locataire-rent-actions > span { color: #aebdc6; font-size: .68rem; }
+.locataire-property-card { min-height: 214px; border: 1px solid #dde5e8; border-radius: 9px; background: #fff; padding: 18px 20px; }
+.locataire-contract-status { display: inline-flex; border-radius: 999px; background: #dcf1e8; color: #23755d; padding: 6px 10px; font-size: .66rem; font-weight: 800; }
+.locataire-property-card h2 { margin: 20px 0 5px; color: #405565; font-size: 1.05rem; }
+.locataire-property-card p { margin: 0 0 8px; color: #7d8e9b; font-size: .78rem; }
+.locataire-property-card address { color: #91a0aa; font-size: .68rem; font-style: normal; line-height: 1.6; }
+.locataire-property-card button { display: block; margin-top: 20px; border: 0; border-bottom: 1px solid #dce8e6; background: transparent; color: #168d91; padding: 0 0 6px; font-size: .72rem; font-weight: 800; cursor: pointer; }
+.locataire-reclamation-banner { min-height: 86px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #dde5e8; border-radius: 9px; background: #fff; margin: 16px 0; padding: 15px 18px; }
+.locataire-reclamation-banner h2 { margin: 0 0 7px; color: #405565; font-size: .9rem; }
+.locataire-reclamation-banner p { margin: 0; color: #91a0aa; font-size: .68rem; }
+.locataire-reclamation-banner button { height: 42px; min-width: 220px; border: 1px solid #dce5e8; border-radius: 7px; background: #fff; color: #657784; font-weight: 800; cursor: pointer; }
+.locataire-payment-history { border: 1px solid #dde5e8; border-radius: 9px; background: #fff; overflow: hidden; }
+.locataire-payment-history-header { height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #edf1f2; padding: 0 18px; }
+.locataire-payment-history-header h2 { margin: 0; color: #405565; font-size: .9rem; }
+.locataire-payment-history-header button { border: 0; background: transparent; color: #168d91; font-size: .72rem; font-weight: 800; cursor: pointer; }
+.locataire-payment-table-wrap { overflow-x: auto; }
+.locataire-payment-table { width: 100%; border-collapse: collapse; }
+.locataire-payment-table th,.locataire-payment-table td { height: 48px; border-bottom: 1px solid #edf1f2; padding: 0 14px; text-align: left; color: #60717d; font-size: .72rem; }
+.locataire-payment-table th { height: 42px; background: #f7f9fa; color: #7a8a96; font-size: .62rem; text-transform: uppercase; }
+.locataire-payment-table td strong { color: #405565; }
+.locataire-payment-status { display: inline-flex; min-width: 66px; justify-content: center; border-radius: 999px; background: #dff3eb; color: #1f755e; padding: 5px 9px; font-size: .68rem; font-weight: 800; }
+.locataire-payment-empty { height: 180px !important; text-align: center !important; color: #91a0aa !important; }
+@media(max-width:900px){.locataire-dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.locataire-dashboard-heading{display:block}.locataire-dashboard-heading>span{display:block;margin-top:8px}.locataire-rent-actions,.locataire-reclamation-banner{align-items:flex-start;flex-direction:column}.locataire-reclamation-banner button{min-width:100%}.locataire-payment-table th:nth-child(4),.locataire-payment-table td:nth-child(4),.locataire-payment-table th:nth-child(5),.locataire-payment-table td:nth-child(5){display:none}}

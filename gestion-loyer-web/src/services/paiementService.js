@@ -35,3 +35,8 @@ export const getImpayesEnCours = async () => {
   return res.data;
 };
 
+export const getPaiementsContrat = async (idContrat) => {
+  const res = await axiosInstance.get(`/paiements/contrat/${idContrat}`);
+  return res.data;
+};
+

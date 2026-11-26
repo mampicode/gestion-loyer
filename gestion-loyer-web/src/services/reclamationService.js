@@ -21,3 +21,8 @@ export const updateReclamationStatut = async (id, statut) => {
   const res = await axiosInstance.patch(`/reclamations/${id}/statut?statut=${encodeURIComponent(statut)}`);
   return res.data;
 };
+
+export const getReclamationsLocataire = async (idLocataire) => {
+  const res = await axiosInstance.get(`/reclamations/locataire/${idLocataire}`);
+  return res.data;
+};

@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getContrats, createPaiement } from "../../services/paiementService";
+import {
+	getContrats,
+	createPaiement,
+	getPaiements,
+} from "../../services/paiementService";
 
 const DEFAULT_CONTRACTS = [
 	{
@@ -49,7 +53,9 @@ const parseAmount = (raw) => {
 function Paiements() {
 	const navigate = useNavigate();
 	const [contracts, setContracts] = useState(DEFAULT_CONTRACTS);
-	const [selectedContractId, setSelectedContractId] = useState(DEFAULT_CONTRACTS[0].idContrat);
+	const [selectedContractId, setSelectedContractId] = useState(
+		DEFAULT_CONTRACTS[0].idContrat
+	);
 	const [form, setForm] = useState({
 		montant: "50000",
 		periode: "Novembre 2026",
@@ -66,7 +72,9 @@ function Paiements() {
 				const res = await getContrats();
 				if (Array.isArray(res) && res.length > 0) {
 					const mapped = res.map((contract, index) => ({
-						idContrat: contract.idContrat || `CTR-${2026}-${String(index + 1).padStart(3, "0")}`,
+						idContrat:
+							contract.idContrat ||
+							`CTR-${2026}-${String(index + 1).padStart(3, "0")}`,
 						locataire: contract.locataire?.nom
 							? `${contract.locataire.prenom || ""} ${contract.locataire.nom}`.trim()
 							: contract.locataire || `Locataire ${index + 1}`,
@@ -77,7 +85,11 @@ function Paiements() {
 						dejaEnregistre: Number(contract.dejaEnregistre || 0),
 						soldeActuel: Number(
 							contract.soldeActuel ||
-								Math.max(0, Number(contract.loyer || 0) - Number(contract.dejaEnregistre || 0))
+								Math.max(
+									0,
+									Number(contract.loyer || 0) -
+										Number(contract.dejaEnregistre || 0)
+								)
 						),
 						reference: contract.reference || `REF-${index + 1}`,
 					}));
@@ -352,4 +364,577 @@ function Paiements() {
 	);
 }
 
-export default Paiements;
+function PaiementInterface() {
+	const [createOpen, setCreateOpen] = useState(false);
+	const [paiements, setPaiements] = useState([]);
+	const [contrats, setContrats] = useState([]);
+	const [search, setSearch] = useState("");
+	const [modeFilter, setModeFilter] = useState("Tous les modes");
+	const [monthFilter, setMonthFilter] = useState("Novembre 2026");
+	const [page, setPage] = useState(1);
+	const [message, setMessage] = useState("");
+	const [submitting, setSubmitting] = useState(false);
+	const [form, setForm] = useState({
+		idContrat: "",
+		periode: "Novembre 2026",
+		montant: "",
+		datePaiement: "2026-11-13",
+		modePaiement: "MOBILE_MONEY",
+		reference: "",
+		noteInterne: "",
+	});
+	const pageSize = 6;
+
+	const load = async () => {
+		try {
+			const [paiementData, contratData] = await Promise.all([
+				getPaiements().catch(() => []),
+				getContrats().catch(() => []),
+			]);
+			setPaiements(Array.isArray(paiementData) ? paiementData : []);
+			setContrats(Array.isArray(contratData) ? contratData : []);
+		} catch (error) {
+			setMessage("Impossible de charger les paiements depuis le serveur.");
+		}
+	};
+
+	useEffect(() => {
+		load();
+	}, []);
+
+	const getLocataireName = (contrat) => {
+		const locataire = contrat?.locataire || {};
+		const user = locataire.utilisateur || locataire;
+		return `${user.prenom || ""} ${user.nom || "Locataire"}`.trim();
+	};
+
+	const getLotName = (contrat) => {
+		const lot = contrat?.lot || {};
+		return `${lot.foyer?.nom || "Foyer"} • ${lot.numero || lot.reference || `Lot ${lot.idLot || ""}`}`;
+	};
+
+	const rows = useMemo(
+		() =>
+			paiements.map((paiement, index) => {
+				const contrat =
+					paiement.contrat ||
+					contrats.find(
+						(item) => String(item.idContrat) === String(paiement.contrat?.idContrat)
+					) ||
+					{};
+				return {
+					id: paiement.idPaiement || index,
+					reference: paiement.reference || `PAY-${paiement.idPaiement || index + 1}`,
+					locataire: getLocataireName(contrat),
+					date: paiement.datePaiement,
+					montant: Number(paiement.montant || 0),
+					mode: paiement.modePaiement || "VIREMENT",
+					statut: String(paiement.statut || "VALIDE").toUpperCase(),
+					periode: paiement.periode || "Novembre 2026",
+				};
+			}),
+		[paiements, contrats]
+	);
+
+	const filtered = useMemo(
+		() =>
+			rows.filter((row) => {
+				const matchesSearch = `${row.locataire} ${row.reference}`
+					.toLowerCase()
+					.includes(search.trim().toLowerCase());
+				const matchesMode =
+					modeFilter === "Tous les modes" || row.mode === modeFilter;
+				const matchesMonth =
+					monthFilter === "Tous les mois" || row.periode === monthFilter;
+				return matchesSearch && matchesMode && matchesMonth;
+			}),
+		[rows, search, modeFilter, monthFilter]
+	);
+
+	const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+	const visible = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+	const formatDate = (value) => {
+		if (!value) return "—";
+		const date = new Date(value);
+		return Number.isNaN(date.getTime())
+			? value
+			: date.toLocaleDateString("fr-FR", {
+					day: "2-digit",
+					month: "short",
+					year: "numeric",
+			  });
+	};
+
+	const selectedContrat = contrats.find(
+		(contrat) => String(contrat.idContrat) === String(form.idContrat)
+	);
+	const montantMensuel = Number(selectedContrat?.montantLoyer || selectedContrat?.loyer || 0);
+	const registered = paiements
+		.filter(
+			(item) =>
+				String(item.contrat?.idContrat) === String(form.idContrat) &&
+				String(item.statut || "VALIDE").toUpperCase() === "VALIDE"
+		)
+		.reduce((total, item) => total + Number(item.montant || 0), 0);
+	const solde = Math.max(0, montantMensuel - registered);
+	const remaining = Math.max(0, solde - Number(form.montant || 0));
+
+	const openCreate = () => {
+		const first = contrats[0];
+		setForm({
+			idContrat: first ? String(first.idContrat) : "",
+			periode: "Novembre 2026",
+			montant: "",
+			datePaiement: new Date().toISOString().slice(0, 10),
+			modePaiement: "MOBILE_MONEY",
+			reference: `MM-${new Date()
+				.toISOString()
+				.slice(2, 10)
+				.replace(/-/g, "")}-001`,
+			noteInterne: "",
+		});
+		setMessage("");
+		setCreateOpen(true);
+	};
+
+	const handleContractChange = (event) => {
+		const idContrat = event.target.value;
+		const contrat = contrats.find((item) => String(item.idContrat) === String(idContrat));
+		setForm((previous) => ({
+			...previous,
+			idContrat,
+			montant: String(
+				Math.max(
+					0,
+					Number(contrat?.montantLoyer || contrat?.loyer || 0) -
+						paiements
+							.filter(
+								(item) =>
+									String(item.contrat?.idContrat) === String(idContrat) &&
+									String(item.statut || "VALIDE").toUpperCase() === "VALIDE"
+							)
+							.reduce((sum, item) => sum + Number(item.montant || 0), 0)
+				)
+			),
+		}));
+	};
+
+	const handleSubmit = async (event) => {
+		event.preventDefault();
+		if (!form.idContrat || Number(form.montant) <= 0) {
+			setMessage("Sélectionnez un contrat et renseignez un montant supérieur à zéro.");
+			return;
+		}
+		setSubmitting(true);
+		setMessage("");
+		try {
+			await createPaiement(form.idContrat, {
+				montant: Number(form.montant),
+				datePaiement: form.datePaiement,
+				modePaiement: form.modePaiement,
+				periode: form.periode,
+				reference: form.reference,
+				statut: "VALIDE",
+			});
+			setCreateOpen(false);
+			setMessage("Paiement enregistré avec succès.");
+			await load();
+		} catch (error) {
+			setMessage(error?.response?.data?.message || "Le paiement n’a pas pu être enregistré.");
+		} finally {
+			setSubmitting(false);
+		}
+	};
+
+	if (createOpen) {
+		return (
+			<div className="payment-creation-page">
+				<div className="payment-breadcrumb">
+					<span>Gestion locative</span>
+					<span className="crumb-separator">/</span>
+					<span className="crumb-current">Enregistrer un paiement</span>
+				</div>
+				<div className="payment-back-row">
+					<button
+						type="button"
+						className="payment-back-link"
+						onClick={() => setCreateOpen(false)}
+					>
+						← Retour aux paiements
+					</button>
+				</div>
+				<div className="payment-header-block">
+					<h1>Enregistrer un paiement</h1>
+					<p>Renseignez les informations de l’encaissement reçu.</p>
+				</div>
+				{message && <div className="payment-message">{message}</div>}
+				<form id="payment-create-form" onSubmit={handleSubmit} className="payment-form-shell">
+					<section className="payment-main-panel">
+						<h2>Informations du paiement</h2>
+						<div className="payment-field full-width">
+							<label htmlFor="payment-contract">
+								Contrat / Locataire <span className="required-mark">*</span>
+							</label>
+							<select
+								id="payment-contract"
+								value={form.idContrat}
+								onChange={handleContractChange}
+								className="payment-input"
+								required
+							>
+								<option value="">Sélectionner un contrat</option>
+								{contrats.map((contrat) => (
+									<option key={contrat.idContrat} value={contrat.idContrat}>
+										CTR-{String(contrat.idContrat).padStart(4, "0")} •{" "}
+										{getLocataireName(contrat)}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="payment-inline-fields">
+							<div className="payment-field">
+								<label htmlFor="payment-period">
+									Période concernée <span className="required-mark">*</span>
+								</label>
+								<select
+									id="payment-period"
+									value={form.periode}
+									onChange={(event) =>
+										setForm((previous) => ({ ...previous, periode: event.target.value }))
+									}
+									className="payment-input"
+								>
+									<option>Novembre 2026</option>
+									<option>Décembre 2026</option>
+									<option>Janvier 2027</option>
+								</select>
+							</div>
+							<div className="payment-field">
+								<label htmlFor="payment-amount">
+									Montant reçu (Ar) <span className="required-mark">*</span>
+								</label>
+								<input
+									id="payment-amount"
+									type="number"
+									min="1"
+									value={form.montant}
+									onChange={(event) =>
+										setForm((previous) => ({ ...previous, montant: event.target.value }))
+									}
+									className="payment-input"
+									required
+								/>
+							</div>
+						</div>
+
+						<div className="payment-inline-fields">
+							<div className="payment-field">
+								<label htmlFor="payment-date">
+									Date du paiement <span className="required-mark">*</span>
+								</label>
+								<input
+									id="payment-date"
+									type="date"
+									value={form.datePaiement}
+									onChange={(event) =>
+										setForm((previous) => ({ ...previous, datePaiement: event.target.value }))
+									}
+									className="payment-input"
+									required
+								/>
+							</div>
+							<div className="payment-field">
+								<label htmlFor="payment-mode">
+									Mode de paiement <span className="required-mark">*</span>
+								</label>
+								<select
+									id="payment-mode"
+									value={form.modePaiement}
+									onChange={(event) =>
+										setForm((previous) => ({ ...previous, modePaiement: event.target.value }))
+									}
+									className="payment-input"
+								>
+									<option value="ESPECES">Espèces</option>
+									<option value="MOBILE_MONEY">Mobile Money</option>
+									<option value="VIREMENT">Virement</option>
+									<option value="CHEQUE">Chèque</option>
+								</select>
+							</div>
+						</div>
+
+						<div className="payment-field full-width">
+							<label htmlFor="payment-reference">
+								Référence du paiement <span className="required-mark">*</span>
+							</label>
+							<input
+								id="payment-reference"
+								value={form.reference}
+								onChange={(event) =>
+									setForm((previous) => ({ ...previous, reference: event.target.value }))
+								}
+								className="payment-input"
+								required
+							/>
+						</div>
+						<div className="payment-field full-width">
+							<label htmlFor="payment-note">Note interne</label>
+							<input
+								id="payment-note"
+								value={form.noteInterne}
+								onChange={(event) =>
+									setForm((previous) => ({ ...previous, noteInterne: event.target.value }))
+								}
+								className="payment-input"
+							/>
+						</div>
+						<div className="payment-form-hint">
+							Modes acceptés : Espèces • Mobile Money • Virement • Chèque
+						</div>
+					</section>
+
+					<aside className="payment-side-panel">
+						<h2>Situation du locataire</h2>
+						<div className="tenant-name">
+							{selectedContrat ? getLocataireName(selectedContrat) : "À choisir"}
+						</div>
+						<div className="tenant-address">
+							{selectedContrat ? getLotName(selectedContrat) : "Sélectionnez un contrat"}
+						</div>
+
+						<div className="status-metrics">
+							<div className="status-row">
+								<span>Loyer de novembre</span>
+								<strong>{formatCurrency(montantMensuel)}</strong>
+							</div>
+							<div className="status-row">
+								<span>Déjà enregistré</span>
+								<strong>{formatCurrency(registered)}</strong>
+							</div>
+							<div className="status-row">
+								<span>Solde actuel</span>
+								<strong>{formatCurrency(solde)}</strong>
+							</div>
+						</div>
+
+						<div className="remaining-box">
+							<div className="remaining-label">RESTE À PAYER APRÈS VALIDATION</div>
+							<div className="remaining-amount">{formatCurrency(remaining)}</div>
+							<div className="remaining-text">
+								{remaining === 0
+									? "Le loyer sera entièrement réglé."
+									: "Le solde restant devra être réglé ultérieurement."}
+							</div>
+						</div>
+					</aside>
+				</form>
+				<div className="payment-actions">
+					<button type="button" className="payment-cancel-btn" onClick={() => setCreateOpen(false)}>
+						Annuler
+					</button>
+					<button
+						type="submit"
+						form="payment-create-form"
+						className="payment-submit-btn"
+						disabled={submitting}
+					>
+						{submitting ? "Validation…" : "Valider l’encaissement →"}
+					</button>
+				</div>
+			</div>
+		);
+	}
+
+	const modeLabel = (mode) => ({
+		ESPECES: "Espèces",
+		MOBILE_MONEY: "Mobile Money",
+		VIREMENT: "Virement",
+		CHEQUE: "Chèque",
+	}[mode] || mode);
+	const totalRegistered = paiements
+		.filter((item) => String(item.statut || "VALIDE").toUpperCase() === "VALIDE")
+		.reduce((sum, item) => sum + Number(item.montant || 0), 0);
+
+	return (
+		<div className="payments-page">
+			<div className="payments-header">
+				<div>
+					<h1>Paiements</h1>
+					<p>Chaque encaissement, enregistré et traçable.</p>
+				</div>
+				<button
+					type="button"
+					className="payments-primary-btn"
+					onClick={openCreate}
+				>
+					+ Enregistrer un paiement
+				</button>
+			</div>
+			{message && <div className="payment-message">{message}</div>}
+			<div className="payments-summary-grid">
+				<div className="payments-summary-card">
+					<span>Encaisse en novembre</span>
+					<strong>{formatCurrency(totalRegistered)}</strong>
+					<small>Paiements transmis dans les locataires</small>
+				</div>
+				<div className="payments-summary-card">
+					<span>Déclarations à vérifier</span>
+					<strong>
+						{
+							paiements.filter(
+								(item) => String(item.statut || "").toUpperCase() === "EN_ATTENTE"
+							).length
+						}
+					</strong>
+					<small>Paiements transmis par les locataires</small>
+				</div>
+				<div className="payments-summary-card">
+					<span>Paiements enregistrés</span>
+					<strong>{paiements.length}</strong>
+					<small>En novembre 2026</small>
+				</div>
+			</div>
+			<div className="payments-toolbar">
+				<label className="payments-search-wrap">
+					<span className="search-icon">⌕</span>
+					<input
+						value={search}
+						onChange={(event) => {
+							setSearch(event.target.value);
+							setPage(1);
+						}}
+						placeholder="Rechercher un paiement, une référence..."
+					/>
+				</label>
+				<div className="payments-select-wrap">
+					<select
+						value={modeFilter}
+						onChange={(event) => {
+							setModeFilter(event.target.value);
+							setPage(1);
+						}}
+					>
+						<option>Tous les modes</option>
+						<option value="ESPECES">Espèces</option>
+						<option value="MOBILE_MONEY">Mobile Money</option>
+						<option value="VIREMENT">Virement</option>
+						<option value="CHEQUE">Chèque</option>
+					</select>
+				</div>
+				<div className="payments-select-wrap">
+					<select
+						value={monthFilter}
+						onChange={(event) => {
+							setMonthFilter(event.target.value);
+							setPage(1);
+						}}
+					>
+						<option>Novembre 2026</option>
+						<option>Décembre 2026</option>
+						<option>Janvier 2027</option>
+						<option>Tous les mois</option>
+					</select>
+				</div>
+			</div>
+			<div className="payments-table-panel">
+				<table className="payments-data-table">
+					<thead>
+						<tr>
+							<th>Locataire / Référence</th>
+							<th>Date</th>
+							<th>Montant</th>
+							<th>Mode</th>
+							<th>Statut</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{visible.length ? (
+							visible.map((row) => (
+								<tr key={row.id}>
+									<td>
+										<span className="main-identity">{row.locataire}</span>
+										<br />
+										<small>{row.reference}</small>
+									</td>
+									<td>{formatDate(row.date)}</td>
+									<td>
+										<strong>{formatCurrency(row.montant)}</strong>
+									</td>
+									<td>{modeLabel(row.mode)}</td>
+									<td>
+										<span
+											className={`status-badge ${
+												row.statut === "ANNULE" ? "pending" : "valid"
+											}`}
+										>
+											{row.statut === "ANNULE"
+												? "Annulé"
+												: row.statut === "EN_ATTENTE"
+												? "En attente"
+												: "Validé"}
+										</span>
+									</td>
+									<td className="actions-col">
+										<button
+											type="button"
+											className="payments-action-btn view"
+										>
+											Voir →
+										</button>
+									</td>
+								</tr>
+							))
+						) : (
+							<tr>
+								<td colSpan="6" style={{ textAlign: "center", height: "220px" }}>
+									Aucun paiement trouvé.
+								</td>
+							</tr>
+						)}
+					</tbody>
+				</table>
+			</div>
+			<div className="payments-footer">
+				<span>
+					{filtered.length} paiements affichés - {paiements.length} en novembre
+				</span>
+				<div className="pagination-box">
+					<button
+						type="button"
+						className="pagination-arrow"
+						disabled={page === 1}
+						onClick={() => setPage((value) => Math.max(1, value - 1))}
+					>
+						‹
+					</button>
+					{Array.from({ length: totalPages }, (_, index) => index + 1).map(
+						(number) => (
+							<button
+								type="button"
+								key={number}
+								className={`page-number ${
+									number === page ? "active" : ""
+								}`}
+								onClick={() => setPage(number)}
+							>
+								{number}
+							</button>
+						)
+					)}
+					<button
+						type="button"
+						className="pagination-arrow"
+						disabled={page === totalPages}
+						onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+					>
+						›
+					</button>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+export default PaiementInterface;

@@ -1,0 +1,43 @@
+.locataire-paiements-page { width: 100%; max-width: 1180px; }
+.locataire-paiements-heading { display: flex; align-items: center; justify-content: space-between; margin: 0 0 20px; }
+.locataire-paiements-heading h1 { margin: 0; color: #25374a; font-size: 1.55rem; }
+.locataire-paiements-heading p { margin: 7px 0 0; color: #7d8e9b; font-size: .86rem; }
+.locataire-declare-button { height: 42px; border: 0; border-radius: 7px; background: #188f91; color: #fff; padding: 0 16px; font-weight: 700; cursor: pointer; }
+.locataire-paiements-message { border: 1px solid #bde2d7; background: #effaf6; color: #19705d; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: .84rem; }
+.locataire-paiements-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 14px; }
+.locataire-paiements-metrics > div { min-height: 112px; border: 1px solid #dde5e8; border-radius: 9px; background: #fff; padding: 20px; display: flex; flex-direction: column; }
+.locataire-paiements-metrics span { color: #66788a; font-size: .78rem; }
+.locataire-paiements-metrics strong { color: #26384a; font-size: 1.55rem; margin: 8px 0 7px; }
+.locataire-paiements-metrics small { color: #91a0aa; font-size: .68rem; }
+.locataire-paiements-notice { min-height: 56px; display: flex; align-items: center; border: 1px solid #bce5dc; border-radius: 9px; background: #ecf8f5; color: #168d91; padding: 0 16px; font-size: .78rem; margin-bottom: 16px; }
+.locataire-paiements-history { border: 1px solid #dde5e8; border-radius: 9px; background: #fff; overflow: hidden; }
+.locataire-paiements-history-header { height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #edf1f2; padding: 0 18px; }
+.locataire-paiements-history-header h2 { margin: 0; color: #405565; font-size: .9rem; }
+.locataire-paiements-history-header select { border: 0; background: transparent; color: #168d91; font-size: .72rem; font-weight: 700; outline: none; }
+.locataire-paiements-table-wrap { overflow-x: auto; }
+.locataire-paiements-table { width: 100%; border-collapse: collapse; }
+.locataire-paiements-table th,.locataire-paiements-table td { height: 48px; border-bottom: 1px solid #edf1f2; padding: 0 14px; text-align: left; color: #60717d; font-size: .72rem; }
+.locataire-paiements-table th { height: 42px; background: #f7f9fa; color: #7a8a96; font-size: .62rem; text-transform: uppercase; }
+.locataire-paiements-table tbody tr:last-child td { border-bottom: 0; }
+.locataire-paiements-table td strong { color: #405565; }
+.locataire-paiement-status { display: inline-flex; min-width: 66px; justify-content: center; border-radius: 999px; background: #dff3eb; color: #1f755e; padding: 5px 9px; font-size: .68rem; font-weight: 800; }
+.locataire-paiement-status.pending { background: #fff1d5; color: #9a6822; }
+.locataire-paiements-empty { height: 220px !important; text-align: center !important; color: #91a0aa !important; }
+.locataire-paiements-footer { min-height: 58px; display: flex; align-items: center; justify-content: space-between; color: #91a0aa; font-size: .72rem; }
+.locataire-paiements-pagination { display: flex; gap: 3px; }
+.locataire-paiements-pagination button { min-width: 28px; height: 28px; border: 0; border-radius: 5px; background: transparent; color: #7d8e99; cursor: pointer; }
+.locataire-paiements-pagination button.active { background: #edf5f4; color: #168d91; }
+.locataire-declare-backdrop { position: fixed; inset: 0; z-index: 130; background: rgba(15,23,42,.32); display: grid; place-items: center; padding: 16px; }
+.locataire-declare-modal { width: min(520px,94vw); max-height: 90vh; overflow-y: auto; border-radius: 12px; background: #fff; padding: 18px; box-shadow: 0 22px 50px rgba(15,23,42,.22); }
+.locataire-declare-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf1f2; padding-bottom: 12px; }
+.locataire-declare-header h2 { margin: 0; color: #25374a; font-size: 1.1rem; }
+.locataire-declare-header button { width: 34px; height: 34px; border: 0; border-radius: 50%; background: #edf2f3; color: #60717d; cursor: pointer; }
+.locataire-declare-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.locataire-declare-form label { display: grid; gap: 6px; color: #536675; font-size: .78rem; }
+.locataire-declare-form label:nth-child(5) { grid-column: 1 / -1; }
+.locataire-declare-form input,.locataire-declare-form select { height: 40px; border: 1px solid #dce4e8; border-radius: 7px; background: #fff; color: #334b5c; padding: 0 10px; }
+.locataire-declare-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.locataire-declare-actions button { height: 40px; border: 1px solid #dce4e8; border-radius: 7px; background: #fff; color: #526779; padding: 0 14px; cursor: pointer; }
+.locataire-declare-actions button[type="submit"] { border-color: #188f91; background: #188f91; color: #fff; }
+@media(max-width:900px){.locataire-paiements-metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.locataire-paiements-heading{align-items:flex-start}.locataire-paiements-metrics{grid-template-columns:1fr}.locataire-paiements-table th:nth-child(4),.locataire-paiements-table td:nth-child(4),.locataire-paiements-table th:nth-child(5),.locataire-paiements-table td:nth-child(5){display:none}.locataire-declare-form{grid-template-columns:1fr}.locataire-declare-form label:nth-child(5){grid-column:auto}}

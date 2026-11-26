@@ -1,0 +1,32 @@
+.locataire-declaration-page { width: 100%; max-width: 1180px; }
+.locataire-declaration-back { border: 0; background: transparent; color: #168d91; font-size: .78rem; font-weight: 700; padding: 0; margin: 0 0 16px; cursor: pointer; }
+.locataire-declaration-back span { margin-left: 5px; }
+.locataire-declaration-heading { margin-bottom: 22px; }
+.locataire-declaration-heading h1 { margin: 0; color: #25374a; font-size: 1.7rem; }
+.locataire-declaration-heading p { margin: 7px 0 0; color: #7d8e9b; font-size: .82rem; }
+.locataire-declaration-message { margin-bottom: 12px; border: 1px solid #bde2d7; background: #effaf6; color: #19705d; border-radius: 8px; padding: 10px 12px; font-size: .82rem; }
+.locataire-declaration-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(260px,.72fr); gap: 18px 26px; align-items: start; }
+.locataire-declaration-form-card,.locataire-declaration-summary { border: 1px solid #dde6e9; border-radius: 9px; background: #fff; }
+.locataire-declaration-form-card { padding: 20px 22px; }
+.locataire-declaration-form-card h2,.locataire-declaration-summary h2 { margin: 0 0 18px; color: #34495a; font-size: .9rem; }
+.locataire-declaration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; }
+.locataire-declaration-grid label { display: grid; gap: 8px; color: #5d7180; font-size: .76rem; }
+.locataire-declaration-grid label span { color: #ef5969; }
+.locataire-declaration-grid input,.locataire-declaration-grid select { width: 100%; height: 43px; box-sizing: border-box; border: 1px solid #dce5e8; border-radius: 7px; background: #fff; color: #405667; padding: 0 12px; outline: none; }
+.locataire-declaration-full { grid-column: 1 / -1; }
+.locataire-declaration-upload label { display: block; margin-bottom: 8px; }
+.locataire-declaration-upload button { width: 100%; height: 82px; border: 1px dashed #9bcbd0; border-radius: 8px; background: #edf7f7; color: #168d91; cursor: pointer; }
+.locataire-declaration-upload button strong { display: block; font-size: 1rem; }
+.locataire-declaration-upload small { display: block; color: #91a0aa; text-align: center; margin-top: 6px; }
+.locataire-declaration-hint { color: #91a0aa; font-size: .68rem; margin: 18px 0 0; }
+.locataire-declaration-summary { padding: 18px; }
+.locataire-declaration-property { display: grid; gap: 5px; margin-bottom: 18px; }
+.locataire-declaration-property strong { color: #405565; font-size: .82rem; }.locataire-declaration-property span { color: #91a0aa; font-size: .72rem; }
+.locataire-declaration-status-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; color: #7d8e9b; font-size: .72rem; }.locataire-declaration-status-row strong { color: #405565; }
+.locataire-declaration-pending { border: 1px solid #e3e9eb; background: #f2faf9; border-radius: 8px; padding: 14px; }.locataire-declaration-pending strong { color: #168d91; font-size: .72rem; }.locataire-declaration-pending p { color: #82949e; font-size: .68rem; line-height: 1.5; }
+.locataire-declaration-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #edf1f2; padding-top: 14px; }
+.locataire-declaration-actions button { height: 42px; min-width: 120px; border-radius: 7px; border: 1px solid #dde5e8; background: #fff; color: #657784; font-weight: 700; cursor: pointer; }
+.locataire-declaration-actions button[type="submit"] { min-width: 190px; border-color: #188f91; background: #188f91; color: #fff; }
+.locataire-declaration-actions button:disabled { opacity: .65; cursor: wait; }
+@media(max-width:900px){.locataire-declaration-layout{grid-template-columns:1fr}.locataire-declaration-summary{order:-1}}
+@media(max-width:640px){.locataire-declaration-grid{grid-template-columns:1fr}.locataire-declaration-full{grid-column:1}.locataire-declaration-actions{justify-content:space-between}.locataire-declaration-actions button{flex:1}}
